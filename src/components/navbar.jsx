@@ -4,7 +4,7 @@ import logo from '../assets/logo.svg';
 
 export default function Navbar() {
     const location = useLocation();
-    const isDashboard = location.pathname.includes('/dashboard');
+    const isAuthenticated = location.pathname !== '/';
     const userName = localStorage.getItem('tmdb_username') || 'Guest';
 
     return (
@@ -21,7 +21,7 @@ export default function Navbar() {
                     </div>
                 </div>
                 
-                {isDashboard ? (
+                {isAuthenticated ? (
                     <>
                         <nav className="hidden md:flex items-center gap-8">
                             <NavLink 
@@ -33,16 +33,23 @@ export default function Navbar() {
                             </NavLink>
                             <NavLink 
                                 to="/" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
                             >
                                 Movies
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
                             </NavLink>
                             <NavLink 
                                 to="/" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
                             >
                                 TV Shows
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
+                            </NavLink>
+                            <NavLink 
+                                to="/favourites" 
+                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                            >
+                                Favourites 
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
                             </NavLink>
                         </nav>

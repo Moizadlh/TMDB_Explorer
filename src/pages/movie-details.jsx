@@ -16,12 +16,17 @@ export default function MovieDetails() {
         const fetchMovieDetails = async () => {
             setIsLoading(true);
             try {
-                const response = await tmdbClient.get(`/movie/${id}`, {
-                    params: { append_to_response: 'credits' }
-                });
+                const endpoint = `/movie/${id}`;
+                const params = { append_to_response: 'credits' };
+                const response = await tmdbClient.get(endpoint, { params });
                 setMovie(response.data);
-                const savedFavs = JSON.parse(localStorage.getItem('favourite_movies') || '[]');
-                setIsFavourite(savedFavs.includes(response.data.id));
+                const sessionId = localStorage.getItem('tmdb_session_id');
+                if (sessionId) {
+                    const statesEndpoint = `/movie/${id}/account_states`;
+                    const statesParams = { session_id: sessionId };
+                    const statesRes = await tmdbClient.get(statesEndpoint, { params: statesParams });
+                    setIsFavourite(statesRes.data.favorite);
+                }
             } catch (error) {
                 console.error("Failed to fetch movie details:", error);
             } finally {
@@ -31,16 +36,28 @@ export default function MovieDetails() {
         fetchMovieDetails();
     }, [id]);
 
-    const toggleFavourite = () => {
-        const savedFavs = JSON.parse(localStorage.getItem('favourite_movies') || '[]');
-        let newFavs;
-        if (isFavourite) {
-            newFavs = savedFavs.filter(favId => favId !== movie.id);
-        } else {
-            newFavs = [...savedFavs, movie.id];
+    const toggleFavourite = async () => {
+        const sessionId = localStorage.getItem('tmdb_session_id');
+        const accountId = localStorage.getItem('tmdb_account_id');
+        if (!sessionId || !accountId) {
+            console.error("User is not authenticated");
+            return;
         }
-        localStorage.setItem('favourite_movies', JSON.stringify(newFavs));
-        setIsFavourite(!isFavourite);
+        const newFavStatus = !isFavourite;
+        setIsFavourite(newFavStatus);
+        try {
+            const endpoint = `/account/${accountId}/favorite`;
+            const payload = {
+                media_type: 'movie',
+                media_id: movie.id,
+                favorite: newFavStatus
+            };
+            const params = { session_id: sessionId };
+            await tmdbClient.post(endpoint, payload, { params });
+        } catch (error) {
+            console.error("Failed to toggle favourite:", error);
+            setIsFavourite(!newFavStatus);
+        }
     };
 
     if (isLoading) {

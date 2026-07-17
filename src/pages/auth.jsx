@@ -16,37 +16,46 @@ export default function Auth() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const tokenRes = await tmdbClient.get('/authentication/token/new');
+            const tokenEndpoint = '/authentication/token/new';
+            const tokenRes = await tmdbClient.get(tokenEndpoint);
             const requestToken = tokenRes.data.request_token;
             if (!tokenRes.data.success) {
                 setIsLoading(false);
                 return console.log("Failed to fetch request token.");
             }
-            const authRes = await tmdbClient.post('/authentication/token/validate_with_login', {
+            const authEndpoint = '/authentication/token/validate_with_login';
+            const authPayload = {
                 username: userName,
                 password: password,
                 request_token: requestToken
-            });
-            if (!authRes.data.success) {
+            };
+            const authResult = await tmdbClient.post(authEndpoint, authPayload);
+            if (!authResult.data.success) {
                 setIsLoading(false);
                 return console.log("Invalid credentials.");
             }
-            const sessionRes = await tmdbClient.post('/authentication/session/new', {
+            const sessionEndpoint = '/authentication/session/new';
+            const sessionPayload = {
                 request_token: requestToken
-            });
-            if (!sessionRes.data.success) {
+            };
+            const sessionResult = await tmdbClient.post(sessionEndpoint, sessionPayload);
+            if (!sessionResult.data.success) {
                 setIsLoading(false);
                 return console.log("Failed to create session.");
             }
-            localStorage.setItem('tmdb_session_id', sessionRes.data.session_id);
-            localStorage.setItem('tmdb_username', userName);
+            const sessionId = sessionResult.data.session_id;
+            localStorage.setItem('tmdb_session_id', sessionId);
+            const accountEndpoint = '/account';
+            const accountParams = { session_id: sessionId };
+            const accountRes = await tmdbClient.get(accountEndpoint, { params: accountParams });
+            localStorage.setItem('tmdb_account_id', accountRes.data.id);
+            localStorage.setItem('tmdb_username', accountRes.data.username || userName);
             ToastMessage({ type: 'success', title: 'Login Successful', message: 'Welcome back!', duration: 2000 });
             setIsLoading(false);
             navigate("/dashboard");
         } catch (error) {
             setIsLoading(false);
-            const errorMessage = error.response?.data?.status_message || error.message || 'Authentication failed';
-            ToastMessage({ type: 'error', title: 'Authentication Failed', message: errorMessage });
+            ToastMessage({ type: 'error', title: 'Authentication Failed', message: `Please try again after sometime. Thankyou!` });
         }
     }
 

@@ -3,6 +3,7 @@ import heroImg from './assets/hero.png'
 import Auth from './pages/auth'
 import Dashboard from './pages/dashboard';
 import MovieDetails from './pages/movie-details';
+import Favourites from './pages/favourites';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/movie/:id" element={<MovieDetails />} />
+            <Route path="/favourites" element={<Favourites />} />
           </Routes>
       </BrowserRouter>
       {/* <Auth></Auth> */}
