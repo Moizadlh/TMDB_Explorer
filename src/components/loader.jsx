@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function Loader({ fullScreen = false, text = "LOADING..." }) {
-    const loaderContent = (
+    const loaderElementContent = (
         <div className="flex flex-col items-center justify-center gap-5">
             <div className="relative w-16 h-16 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-slate-800/50"></div>
@@ -16,14 +16,14 @@ export default function Loader({ fullScreen = false, text = "LOADING..." }) {
     if (fullScreen) {
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 backdrop-blur-md transition-all duration-300">
-                {loaderContent}
+                {loaderElementContent}
             </div>
         );
     }
 
     return (
         <div className="flex justify-center w-full py-12">
-            {loaderContent}
+            {loaderElementContent}
         </div>
     );
 }

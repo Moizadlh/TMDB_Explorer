@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon } from './icons';
 import logo from '../assets/logo.svg';
 
 export default function Navbar() {
@@ -32,17 +32,10 @@ export default function Navbar() {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
                             </NavLink>
                             <NavLink 
-                                to="/" 
+                                to="/tvshows" 
                                 className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
                             >
-                                Movies
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
-                            </NavLink>
-                            <NavLink 
-                                to="/" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
-                            >
-                                TV Shows
+                                Tv Shows
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
                             </NavLink>
                             <NavLink 

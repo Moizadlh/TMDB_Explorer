@@ -5,6 +5,8 @@ import ToastMessage from '../components/toaster';
 import { useNavigate } from 'react-router-dom';
 import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
+import Footer from '../components/footer';
+import { TOKEN_NEW_ENDPOINT, TOKEN_VALIDATE_ENDPOINT, SESSION_NEW_ENDPOINT, ACCOUNT_DETAILS_ENDPOINT } from '../utils/constants';
 
 export default function Auth() {
     const [userName, setUserName] = useState("");
@@ -12,44 +14,40 @@ export default function Auth() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    async function formSubmision(e) {
+    async function handleLoginFormSubmission(e) {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const tokenEndpoint = '/authentication/token/new';
-            const tokenRes = await tmdbClient.get(tokenEndpoint);
-            const requestToken = tokenRes.data.request_token;
-            if (!tokenRes.data.success) {
+            const requestTokenResponse = await tmdbClient.get(TOKEN_NEW_ENDPOINT);
+            const requestToken = requestTokenResponse.data.request_token;
+            if (!requestTokenResponse.data.success) {
                 setIsLoading(false);
                 return console.log("Failed to fetch request token.");
             }
-            const authEndpoint = '/authentication/token/validate_with_login';
             const authPayload = {
                 username: userName,
                 password: password,
                 request_token: requestToken
             };
-            const authResult = await tmdbClient.post(authEndpoint, authPayload);
-            if (!authResult.data.success) {
+            const authenticationResponse = await tmdbClient.post(TOKEN_VALIDATE_ENDPOINT, authPayload);
+            if (!authenticationResponse.data.success) {
                 setIsLoading(false);
                 return console.log("Invalid credentials.");
             }
-            const sessionEndpoint = '/authentication/session/new';
             const sessionPayload = {
                 request_token: requestToken
             };
-            const sessionResult = await tmdbClient.post(sessionEndpoint, sessionPayload);
-            if (!sessionResult.data.success) {
+            const sessionResponse = await tmdbClient.post(SESSION_NEW_ENDPOINT, sessionPayload);
+            if (!sessionResponse.data.success) {
                 setIsLoading(false);
                 return console.log("Failed to create session.");
             }
-            const sessionId = sessionResult.data.session_id;
+            const sessionId = sessionResponse.data.session_id;
             localStorage.setItem('tmdb_session_id', sessionId);
-            const accountEndpoint = '/account';
             const accountParams = { session_id: sessionId };
-            const accountRes = await tmdbClient.get(accountEndpoint, { params: accountParams });
-            localStorage.setItem('tmdb_account_id', accountRes.data.id);
-            localStorage.setItem('tmdb_username', accountRes.data.username || userName);
+            const accountDetailsResponse = await tmdbClient.get(ACCOUNT_DETAILS_ENDPOINT, { params: accountParams });
+            localStorage.setItem('tmdb_account_id', accountDetailsResponse.data.id);
+            localStorage.setItem('tmdb_username', accountDetailsResponse.data.username || userName);
             ToastMessage({ type: 'success', title: 'Login Successful', message: 'Welcome back!', duration: 2000 });
             setIsLoading(false);
             navigate("/dashboard");
@@ -84,7 +82,7 @@ export default function Auth() {
                     <div className="w-full md:w-1/2 p-10 md:p-14 flex flex-col justify-center relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-bl-[100px] pointer-events-none"></div>
                         
-                        <form className="w-full max-w-sm mx-auto flex flex-col" onSubmit={formSubmision}>
+                        <form className="w-full max-w-sm mx-auto flex flex-col" onSubmit={handleLoginFormSubmission}>
                             <div className="mb-10 text-center md:text-left">
                                 <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tight">Welcome Back</h2>
                                 <p className="text-slate-400 text-sm">Sign in to access your personalized movie guide.</p>
@@ -133,6 +131,7 @@ export default function Auth() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }

@@ -1,0 +1,9 @@
+export const TMDB_API_BASE_URL = 'https://api.themoviedb.org/3';
+export const TOKEN_NEW_ENDPOINT = '/authentication/token/new';
+export const TOKEN_VALIDATE_ENDPOINT = '/authentication/token/validate_with_login';
+export const SESSION_NEW_ENDPOINT = '/authentication/session/new';
+export const ACCOUNT_DETAILS_ENDPOINT = '/account';
+export const SEARCH_MOVIE_ENDPOINT = '/search/movie';
+export const POPULAR_MOVIE_ENDPOINT = '/movie/popular';
+export const SEARCH_TV_ENDPOINT = '/search/tv';
+export const POPULAR_TV_ENDPOINT = '/tv/popular';

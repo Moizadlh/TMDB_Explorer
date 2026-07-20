@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon } from '@heroicons/react/24/solid';
-import { HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline';
+import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '../components/icons';
 import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
+import Footer from '../components/footer';
+import { formatRuntime, getReleaseYear } from '../utils/helpers';
+import { getToggleFavouriteEndpoint, getMovieAccountStatesEndpoint } from '../utils/helpers';
 
 export default function MovieDetails() {
     const { id } = useParams();
@@ -22,10 +24,10 @@ export default function MovieDetails() {
                 setMovie(response.data);
                 const sessionId = localStorage.getItem('tmdb_session_id');
                 if (sessionId) {
-                    const statesEndpoint = `/movie/${id}/account_states`;
+                    const statesEndpoint = getMovieAccountStatesEndpoint(id);
                     const statesParams = { session_id: sessionId };
-                    const statesRes = await tmdbClient.get(statesEndpoint, { params: statesParams });
-                    setIsFavourite(statesRes.data.favorite);
+                    const accountStatesResponse = await tmdbClient.get(statesEndpoint, { params: statesParams });
+                    setIsFavourite(accountStatesResponse.data.favorite);
                 }
             } catch (error) {
                 console.error("Failed to fetch movie details:", error);
@@ -36,27 +38,27 @@ export default function MovieDetails() {
         fetchMovieDetails();
     }, [id]);
 
-    const toggleFavourite = async () => {
+    const handleToggleFavouriteStatus = async () => {
         const sessionId = localStorage.getItem('tmdb_session_id');
         const accountId = localStorage.getItem('tmdb_account_id');
         if (!sessionId || !accountId) {
             console.error("User is not authenticated");
             return;
         }
-        const newFavStatus = !isFavourite;
-        setIsFavourite(newFavStatus);
+        const newFavouriteStatus = !isFavourite;
+        setIsFavourite(newFavouriteStatus);
         try {
-            const endpoint = `/account/${accountId}/favorite`;
+            const endpoint = getToggleFavouriteEndpoint(accountId);
             const payload = {
                 media_type: 'movie',
                 media_id: movie.id,
-                favorite: newFavStatus
+                favorite: newFavouriteStatus
             };
             const params = { session_id: sessionId };
             await tmdbClient.post(endpoint, payload, { params });
         } catch (error) {
             console.error("Failed to toggle favourite:", error);
-            setIsFavourite(!newFavStatus);
+            setIsFavourite(!newFavouriteStatus);
         }
     };
 
@@ -86,10 +88,8 @@ export default function MovieDetails() {
         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
         : null;
 
-    const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown';
-    const hours = Math.floor(movie.runtime / 60);
-    const minutes = movie.runtime % 60;
-    const runtimeFormatted = `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+    const releaseYear = getReleaseYear(movie.release_date);
+    const runtimeFormatted = formatRuntime(movie.runtime);
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30 overflow-x-hidden">
@@ -171,7 +171,7 @@ export default function MovieDetails() {
                                 Watch Now
                             </button>
                             <button 
-                                onClick={toggleFavourite}
+                                onClick={handleToggleFavouriteStatus}
                                 className={`flex items-center justify-center w-14 h-14 rounded-full border transition-all ${
                                     isFavourite 
                                     ? 'bg-rose-500/10 border-rose-500/50 text-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.2)]' 
@@ -222,6 +222,7 @@ export default function MovieDetails() {
                     </div>
                 )}
             </main>
+            <Footer />
             
             <style dangerouslySetInnerHTML={{__html: `
                 .snap-x::-webkit-scrollbar {

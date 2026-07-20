@@ -1,10 +1,10 @@
 export default function ToastMessage({ type = 'info', title, message, duration = 4000 }) {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none sm:top-6 sm:right-6 max-w-[calc(100vw-2rem)] sm:max-w-sm w-full';
-    document.body.appendChild(container);
+  let toastContainerElement = document.getElementById('toast-container');
+  if (!toastContainerElement) {
+    toastContainerElement = document.createElement('div');
+    toastContainerElement.id = 'toast-container';
+    toastContainerElement.className = 'fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none sm:top-6 sm:right-6 max-w-[calc(100vw-2rem)] sm:max-w-sm w-full';
+    document.body.appendChild(toastContainerElement);
   }
 
   const themes = {
@@ -26,10 +26,10 @@ export default function ToastMessage({ type = 'info', title, message, duration =
   };
 
   const currentTheme = themes[type] || themes.info;
-  const toast = document.createElement('div');
-  toast.className = `flex items-start p-4 rounded-2xl shadow-2xl backdrop-blur-md border pointer-events-auto transition-all duration-300 translate-x-[120%] opacity-0 ${currentTheme.wrapper}`;
+  const toastElement = document.createElement('div');
+  toastElement.className = `flex items-start p-4 rounded-2xl shadow-2xl backdrop-blur-md border pointer-events-auto transition-all duration-300 translate-x-[120%] opacity-0 ${currentTheme.wrapper}`;
 
-  toast.innerHTML = `
+  toastElement.innerHTML = `
     <div class="flex-shrink-0 mr-3 ${currentTheme.iconText}">
       ${currentTheme.icon}
     </div>
@@ -42,23 +42,23 @@ export default function ToastMessage({ type = 'info', title, message, duration =
     </button>
   `;
 
-  container.appendChild(toast);
+  toastContainerElement.appendChild(toastElement);
   requestAnimationFrame(() => {
-    toast.classList.remove('translate-x-[120%]', 'opacity-0');
-    toast.classList.add('translate-x-0', 'opacity-100');
+    toastElement.classList.remove('translate-x-[120%]', 'opacity-0');
+    toastElement.classList.add('translate-x-0', 'opacity-100');
   });
-  const closeBtn = toast.querySelector('button');
+  const closeToastButton = toastElement.querySelector('button');
   const closeToast = () => {
-    toast.classList.remove('translate-x-0', 'opacity-100');
-    toast.classList.add('translate-x-[120%]', 'opacity-0');
+    toastElement.classList.remove('translate-x-0', 'opacity-100');
+    toastElement.classList.add('translate-x-[120%]', 'opacity-0');
     setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
+      if (toastElement.parentNode) {
+        toastElement.parentNode.removeChild(toastElement);
       }
     }, 300);
   };
 
-  closeBtn.addEventListener('click', closeToast);
+  closeToastButton.addEventListener('click', closeToast);
   if (duration > 0) {
     setTimeout(closeToast, duration);
   }

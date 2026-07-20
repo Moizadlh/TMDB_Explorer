@@ -1,14 +1,11 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import Auth from './pages/auth'
+import Auth from './pages/auth';
 import Dashboard from './pages/dashboard';
 import MovieDetails from './pages/movie-details';
 import Favourites from './pages/favourites';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import TvShows from './pages/tv-shows';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <BrowserRouter>
@@ -17,9 +14,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/movie/:id" element={<MovieDetails />} />
             <Route path="/favourites" element={<Favourites />} />
+            <Route path="/tvshows" element={<TvShows />} />
           </Routes>
       </BrowserRouter>
-      {/* <Auth></Auth> */}
     </>
   )
 }

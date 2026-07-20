@@ -1,27 +1,22 @@
-import { StarIcon } from '@heroicons/react/24/solid';
+import { StarIcon } from './icons';
 import { useNavigate } from 'react-router-dom';
-import movieImagePlaceholder from "../assets/movie-image-placeholder.jpg"
+import { getReleaseYear, getImageUrl } from '../utils/helpers';
 
-export default function Card({ movie }) {
+export default function MovieCard({ movie = null, tvShow = null }) {
     const navigate = useNavigate();
 
-    const imageUrl = movie.poster_path
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-        : movieImagePlaceholder;
-
-    const releaseYear = movie.release_date
-        ? new Date(movie.release_date).getFullYear()
-        : 'Unknown';
+    const imageUrl = movie ? getImageUrl(movie.poster_path) : getImageUrl(tvShow.poster_path);
+    const releaseYear = movie ? getReleaseYear(movie.release_date) : getReleaseYear(tvShow.first_air_date);
 
     return (
         <div 
-            onClick={() => navigate(`/movie/${movie.id}`)}
+            onClick={() => movie ? (navigate(`/movie/${movie.id}`)) : ("")}
             className="group relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(79,70,229,0.15)] flex flex-col h-full cursor-pointer"
         >
             <div className="relative aspect-[2/3] overflow-hidden bg-slate-950">
                 <img
                     src={imageUrl}
-                    alt={movie.title}
+                    alt={movie ? movie.title : tvShow.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                 />
@@ -29,13 +24,13 @@ export default function Card({ movie }) {
                 
                 <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-lg border border-slate-700/50 flex items-center gap-1">
                     <StarIcon className="w-4 h-4 text-amber-400" />
-                    <span className="text-xs font-bold text-white">{movie.vote_average ? movie.vote_average.toFixed(1) : 'NR'}</span>
+                    <span className="text-xs font-bold text-white">{movie ? (movie.vote_average ? movie.vote_average.toFixed(1) : 'NR') : (tvShow.vote_average ? tvShow.vote_average.toFixed(1) : 'NR') }</span>
                 </div>
             </div>
 
             <div className="p-4 flex-1 flex flex-col">
                 <h3 className="text-sm md:text-base font-bold text-white line-clamp-1 mb-1 group-hover:text-indigo-400 transition-colors">
-                    {movie.title}
+                    {movie ? movie.title : tvShow.name}
                 </h3>
                 <p className="text-xs text-slate-400 mt-auto">
                     {releaseYear}

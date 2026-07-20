@@ -1,85 +1,85 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from '../components/navbar';
-import Card from '../components/card';
+import MovieCard from '../components/movie-card';
+import Footer from '../components/footer';
 import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
-import { MagnifyingGlassIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon } from '../components/icons';
+import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../utils/constants';
 
 export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [movies, setMovies] = useState([]);
+    const [allFetchedMediaItems, setAllFetchedMediaItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [allFetchedMovies, setAllFetchedMovies] = useState([]);
-    const [tmdbPage, setTmdbPage] = useState(1);
+    const [currentTmdbApiPage, setCurrentTmdbApiPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const isInitialLoad = useRef(true);
-    const itemsPerPage = 12;
+    const isInitialComponentLoad = useRef(true);
+    const observerTarget = useRef(null);
 
-    const fetchMovies = useCallback(async (query, tPage, append = false) => {
+    const fetchMediaItems = useCallback(async (query, apiPage, append = false) => {
         setIsLoading(true);
         try {
-            const endpoint = query ? '/search/movie' : '/movie/popular';
-            const params = { page: tPage };
+            const endpoint = query ? SEARCH_MOVIE_ENDPOINT : POPULAR_MOVIE_ENDPOINT;
+            const params = { page: apiPage };
             if (query) {
                 params.query = query;
             }
             const response = await tmdbClient.get(endpoint, { params });
             const results = response.data.results || [];
-            setAllFetchedMovies(prev => append ? [...prev, ...results] : results);
+            setAllFetchedMediaItems(prev => append ? [...prev, ...results] : results);
             setHasMore(response.data.page < response.data.total_pages);
         } catch (error) {
-            console.error("Failed to fetch movies:", error);
+            console.error("Failed to fetch media items:", error);
         } finally {
             setIsLoading(false);
-            if (isInitialLoad.current) isInitialLoad.current = false;
+            if (isInitialComponentLoad.current) isInitialComponentLoad.current = false;
         }
     }, []);
 
     useEffect(() => {
-        if (!isInitialLoad.current) {
+        if (!isInitialComponentLoad.current) {
             setIsSearching(true);
         }
-        setCurrentPage(1);
-        setTmdbPage(1);
-        if (searchQuery) setAllFetchedMovies([]);
-        fetchMovies(searchQuery, 1, false);
+        setCurrentTmdbApiPage(1);
+        if (searchQuery) setAllFetchedMediaItems([]);
+        fetchMediaItems(searchQuery, 1, false);
         setIsSearching(false);
         
         return (() => {});
-    }, [searchQuery, fetchMovies]);
+    }, [searchQuery, fetchMediaItems]);
 
     useEffect(() => {
-        const requiredMovies = currentPage * itemsPerPage;
-        if (allFetchedMovies.length < requiredMovies && hasMore && !isLoading && !isSearching) {
-            const nextTmdbPage = tmdbPage + 1;
-            setTmdbPage(nextTmdbPage);
-            fetchMovies(searchQuery, nextTmdbPage, true);
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !isLoading && !isSearching) {
+                    const nextTmdbPage = currentTmdbApiPage + 1;
+                    setCurrentTmdbApiPage(nextTmdbPage);
+                    fetchMediaItems(searchQuery, nextTmdbPage, true);
+                }
+            },
+            { threshold: 1.0 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
         }
-    }, [currentPage, allFetchedMovies.length, hasMore, isLoading, isSearching, tmdbPage, searchQuery, fetchMovies]);
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentMovies = allFetchedMovies.slice(startIndex, startIndex + itemsPerPage);
-    const canGoNext = (allFetchedMovies.length > currentPage * itemsPerPage) || hasMore;
-    const canGoPrev = currentPage > 1;
-
-    const handleNext = () => {
-        if (canGoNext) setCurrentPage(prev => prev + 1);
-    };
-
-    const handlePrev = () => {
-        if (canGoPrev) setCurrentPage(prev => prev - 1);
-    };
+        return () => {
+            if (observerTarget.current) {
+                observer.unobserve(observerTarget.current);
+            }
+        };
+    }, [hasMore, isLoading, isSearching, currentTmdbApiPage, searchQuery, fetchMediaItems]);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30 relative">
+        <div className="min-h-screen flex flex-col bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30 relative">
             <Navbar />
-            {isLoading && currentMovies.length === 0 && isInitialLoad.current && (
+            {isLoading && allFetchedMediaItems.length === 0 && isInitialComponentLoad.current && (
                 <Loader fullScreen={true} text="FETCHING MOVIES..." />
             )}
 
-            <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto">
+            <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex-grow w-full">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                     <div>
                         <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2">
@@ -107,16 +107,21 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {(isLoading || isSearching) && !isInitialLoad.current && currentMovies.length === 0 ? (
+                {(isLoading || isSearching) && !isInitialComponentLoad.current && allFetchedMediaItems.length === 0 ? (
                     <div className="py-20">
                         <Loader fullScreen={false} text="SEARCHING..." />
                     </div>
-                ) : currentMovies.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 min-h-[400px]">
-                        {currentMovies.map((movie) => (
-                            <Card key={movie.id} movie={movie} />
-                        ))}
-                    </div>
+                ) : allFetchedMediaItems.length > 0 ? (
+                    <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 min-h-[400px]">
+                            {allFetchedMediaItems.map((movie, index) => (
+                                <MovieCard key={`${movie.id}-${index}`} movie={movie} />
+                            ))}
+                        </div>
+                        <div ref={observerTarget} className="h-10 mt-8 flex justify-center items-center">
+                            {isLoading && hasMore && <Loader fullScreen={false} text="LOADING MORE..." />}
+                        </div>
+                    </>
                 ) : (
                     !isLoading && !isSearching && (
                         <div className="flex flex-col items-center justify-center py-20 text-slate-500 min-h-[400px]">
@@ -126,47 +131,8 @@ export default function Dashboard() {
                         </div>
                     )
                 )}
-
-                {isLoading && currentMovies.length > 0 && (
-                    <div className="mt-8">
-                        <Loader fullScreen={false} text="LOADING MORE..." />
-                    </div>
-                )}
-
-                {currentMovies.length > 0 && (
-                    <div className="flex items-center justify-center gap-4 mt-12">
-                        <button 
-                            onClick={handlePrev}
-                            disabled={!canGoPrev}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                                !canGoPrev 
-                                    ? 'bg-slate-900/50 text-slate-600 cursor-not-allowed border border-slate-800' 
-                                    : 'bg-slate-800 text-white hover:bg-slate-700 border border-slate-700 hover:border-slate-600'
-                            }`}
-                        >
-                            <ArrowLeftIcon className="w-4 h-4" />
-                            Previous
-                        </button>
-                        
-                        <span className="text-sm font-medium text-slate-400">
-                            Page <span className="text-white">{currentPage}</span>
-                        </span>
-
-                        <button 
-                            onClick={handleNext}
-                            disabled={!canGoNext}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                                !canGoNext 
-                                    ? 'bg-slate-900/50 text-slate-600 cursor-not-allowed border border-slate-800' 
-                                    : 'bg-indigo-600 text-white hover:bg-indigo-500 hover:shadow-[0_0_15px_rgba(79,70,229,0.3)]'
-                            }`}
-                        >
-                            Next
-                            <ArrowRightIcon className="w-4 h-4" />
-                        </button>
-                    </div>
-                )}
             </main>
+            <Footer />
         </div>
     );
 }
