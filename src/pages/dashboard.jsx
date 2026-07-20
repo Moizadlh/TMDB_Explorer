@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from '../components/navbar';
 import MovieCard from '../components/movie-card';
 import Footer from '../components/footer';
-import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
 import { MagnifyingGlassIcon } from '../components/icons';
-import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../utils/constants';
+import api from "../api/api";
+import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../api/api';
 
 export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +25,7 @@ export default function Dashboard() {
             if (query) {
                 params.query = query;
             }
-            const response = await tmdbClient.get(endpoint, { params });
+            const response = await api.get(endpoint, { params });
             const results = response.data.results || [];
             setAllFetchedMediaItems(prev => append ? [...prev, ...results] : results);
             setHasMore(response.data.page < response.data.total_pages);

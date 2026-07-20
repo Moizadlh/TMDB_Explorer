@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { UserCircleIcon } from './icons';
-import logo from '../assets/logo.svg';
+import logo from '../assets/icons/logo.svg';
 
 export default function Navbar() {
     const location = useLocation();

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '../components/icons';
-import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
 import Footer from '../components/footer';
 import { formatRuntime, getReleaseYear } from '../utils/helpers';
-import { getToggleFavouriteEndpoint, getMovieAccountStatesEndpoint } from '../utils/helpers';
+import api from "../api/api";
+import { getMovieEndpoint, getToggleFavouriteEndpoint, getMovieAccountStatesEndpoint } from '../api/api';
 
 export default function MovieDetails() {
     const { id } = useParams();
@@ -18,15 +18,15 @@ export default function MovieDetails() {
         const fetchMovieDetails = async () => {
             setIsLoading(true);
             try {
-                const endpoint = `/movie/${id}`;
+                const endpoint = getMovieEndpoint(id);
                 const params = { append_to_response: 'credits' };
-                const response = await tmdbClient.get(endpoint, { params });
+                const response = await api.get(endpoint, { params });
                 setMovie(response.data);
                 const sessionId = localStorage.getItem('tmdb_session_id');
                 if (sessionId) {
                     const statesEndpoint = getMovieAccountStatesEndpoint(id);
                     const statesParams = { session_id: sessionId };
-                    const accountStatesResponse = await tmdbClient.get(statesEndpoint, { params: statesParams });
+                    const accountStatesResponse = await api.get(statesEndpoint, { params: statesParams });
                     setIsFavourite(accountStatesResponse.data.favorite);
                 }
             } catch (error) {
@@ -55,7 +55,7 @@ export default function MovieDetails() {
                 favorite: newFavouriteStatus
             };
             const params = { session_id: sessionId };
-            await tmdbClient.post(endpoint, payload, { params });
+            await api.post(endpoint, payload, { params });
         } catch (error) {
             console.error("Failed to toggle favourite:", error);
             setIsFavourite(!newFavouriteStatus);

@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from '../components/navbar';
 import MovieCard from '../components/movie-card';
 import Footer from '../components/footer';
-import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
 import { HeartIcon, HeartOutlineIcon } from '../components/icons';
-import { getAccountFavouriteMoviesEndpoint } from '../utils/helpers';
+import api from "../api/api";
+import { getAccountFavouriteMoviesEndpoint } from '../api/api';
 
 export default function Favourites() {
     const [allFetchedFavouriteMovies, setAllFetchedFavouriteMovies] = useState([]);
@@ -31,7 +31,7 @@ export default function Favourites() {
                 session_id: sessionId,
                 page: apiPage
             };
-            const response = await tmdbClient.get(endpoint, { params });
+            const response = await api.get(endpoint, { params });
             const results = response.data.results || [];
             setAllFetchedFavouriteMovies(prev => append ? [...prev, ...results] : results);
             setHasMore(response.data.page < response.data.total_pages);

@@ -1,12 +1,12 @@
 import Navbar from '../components/navbar'
-import loginBanner from "../assets/auth-banner.png";
+import loginBanner from "../assets/images/auth-banner.png";
 import { useState } from 'react';
 import ToastMessage from '../components/toaster';
 import { useNavigate } from 'react-router-dom';
-import tmdbClient from '../api/tmdb-client';
 import Loader from '../components/loader';
 import Footer from '../components/footer';
-import { TOKEN_NEW_ENDPOINT, TOKEN_VALIDATE_ENDPOINT, SESSION_NEW_ENDPOINT, ACCOUNT_DETAILS_ENDPOINT } from '../utils/constants';
+import api from '../api/api'
+import { TOKEN_NEW_ENDPOINT, TOKEN_VALIDATE_ENDPOINT, SESSION_NEW_ENDPOINT, ACCOUNT_DETAILS_ENDPOINT } from '../api/api';
 
 export default function Auth() {
     const [userName, setUserName] = useState("");
@@ -18,7 +18,7 @@ export default function Auth() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const requestTokenResponse = await tmdbClient.get(TOKEN_NEW_ENDPOINT);
+            const requestTokenResponse = await api.get(TOKEN_NEW_ENDPOINT);
             const requestToken = requestTokenResponse.data.request_token;
             if (!requestTokenResponse.data.success) {
                 setIsLoading(false);
@@ -29,7 +29,7 @@ export default function Auth() {
                 password: password,
                 request_token: requestToken
             };
-            const authenticationResponse = await tmdbClient.post(TOKEN_VALIDATE_ENDPOINT, authPayload);
+            const authenticationResponse = await api.post(TOKEN_VALIDATE_ENDPOINT, authPayload);
             if (!authenticationResponse.data.success) {
                 setIsLoading(false);
                 return console.log("Invalid credentials.");
@@ -37,7 +37,7 @@ export default function Auth() {
             const sessionPayload = {
                 request_token: requestToken
             };
-            const sessionResponse = await tmdbClient.post(SESSION_NEW_ENDPOINT, sessionPayload);
+            const sessionResponse = await api.post(SESSION_NEW_ENDPOINT, sessionPayload);
             if (!sessionResponse.data.success) {
                 setIsLoading(false);
                 return console.log("Failed to create session.");
@@ -45,7 +45,7 @@ export default function Auth() {
             const sessionId = sessionResponse.data.session_id;
             localStorage.setItem('tmdb_session_id', sessionId);
             const accountParams = { session_id: sessionId };
-            const accountDetailsResponse = await tmdbClient.get(ACCOUNT_DETAILS_ENDPOINT, { params: accountParams });
+            const accountDetailsResponse = await api.get(ACCOUNT_DETAILS_ENDPOINT, { params: accountParams });
             localStorage.setItem('tmdb_account_id', accountDetailsResponse.data.id);
             localStorage.setItem('tmdb_username', accountDetailsResponse.data.username || userName);
             ToastMessage({ type: 'success', title: 'Login Successful', message: 'Welcome back!', duration: 2000 });
