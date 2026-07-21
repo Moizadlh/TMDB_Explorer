@@ -83,7 +83,7 @@ export default function Auth() {
             setAuth(sessionId, accountDetailsResponse.data.id, accountDetailsResponse.data.username || data.username);
             ToastMessage({ type: 'success', title: 'Login Successful', message: 'Welcome back!', duration: 2000 });
             setIsLoading(false);
-            navigate("/dashboard");
+            navigate("/home");
         } catch (error) {
             setIsLoading(false);
             ToastMessage({ type: 'error', title: 'Authentication Failed', message: `Please try again after sometime. Thankyou!` });

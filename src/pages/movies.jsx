@@ -9,7 +9,7 @@ import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../api/api';
 import debounce from "lodash.debounce";
 import { useSearchParams } from "react-router-dom";
 
-export default function Dashboard() {
+export default function Movies() {
     const [searchParams, setSearchParams] = useSearchParams();
     const urlSearchQuery = searchParams.get("search") || "";
     const [searchQuery, setSearchQuery] = useState(urlSearchQuery);

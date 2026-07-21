@@ -43,15 +43,22 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                     <>
                         <nav className="hidden md:flex items-center gap-8">
                             <NavLink 
-                                to="/dashboard" 
+                                to="/home" 
                                 className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
                             >
-                                Dashboard
+                                Home
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
+                            </NavLink>
+                            <NavLink 
+                                to="/movies" 
+                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                            >
+                                Movies
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
                             </NavLink>
                             <NavLink 
                                 to="/tvshows" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/home' && location.pathname !== '/movies' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
                             >
                                 Tv Shows
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
@@ -69,7 +76,8 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                             <button 
                                 onClick={toggleTheme}
                                 className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-                                aria-label="Toggle Theme"
+                                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                                title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
                             >
                                 {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
                             </button>
@@ -117,8 +125,6 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                         </button>
                     </div>
                 )}
-
-                {/* Mobile Toggle */}
                 <div className="md:hidden flex items-center gap-2">
                     <button 
                         onClick={toggleTheme}
@@ -136,8 +142,6 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                     </button>
                 </div>
             </div>
-
-            {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-xl py-4 px-6 flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-200">
                     {isAuthenticated ? (
@@ -157,8 +161,9 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                                 </button>
                             </div>
                             <nav className="flex flex-col gap-1 pb-2">
-                                <NavLink onClick={closeMobileMenu} to="/dashboard" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Dashboard</NavLink>
-                                <NavLink onClick={closeMobileMenu} to="/tvshows" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/dashboard' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Tv Shows</NavLink>
+                                <NavLink onClick={closeMobileMenu} to="/home" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Home</NavLink>
+                                <NavLink onClick={closeMobileMenu} to="/movies" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Movies</NavLink>
+                                <NavLink onClick={closeMobileMenu} to="/tvshows" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/home' && location.pathname !== '/movies' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Tv Shows</NavLink>
                                 <NavLink onClick={closeMobileMenu} to="/favourites" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Favourites</NavLink>
                             </nav>
                         </>
