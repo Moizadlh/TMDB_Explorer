@@ -73,7 +73,7 @@ export default function Favourites() {
     }, [hasMore, isLoading, currentTmdbApiPage, fetchFavouriteMovies]);
 
     return (
-        <div className="min-h-screen flex flex-col bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30 relative">
+        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-indigo-500/30 relative transition-colors duration-300">
             <Navbar />
             
             {isLoading && allFetchedFavouriteMovies.length === 0 && isInitialComponentLoad.current && (
@@ -82,19 +82,19 @@ export default function Favourites() {
 
             <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex-grow w-full">
                 <div className="mb-10">
-                    <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2 flex items-center gap-3">
+                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2 flex items-center gap-3">
                         <HeartIcon className="w-8 h-8 text-rose-500" />
                         Your Favourites
                     </h1>
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">
                         Movies you've loved and saved for later.
                     </p>
                 </div>
 
                 {!isLoading && allFetchedFavouriteMovies.length === 0 && !isInitialComponentLoad.current ? (
-                    <div className="flex-1 flex flex-col items-center justify-center py-20 text-slate-500">
+                    <div className="flex-1 flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400">
                         <HeartOutlineIcon className="h-16 w-16 mb-6 opacity-20 text-rose-500" />
-                        <p className="text-xl font-medium text-slate-300">No favourites yet.</p>
+                        <p className="text-xl font-medium text-slate-700 dark:text-slate-300">No favourites yet.</p>
                         <p className="text-sm mt-2">Explore movies and click the heart icon to add them here.</p>
                     </div>
                 ) : (

@@ -4,10 +4,11 @@ import MovieDetails from './pages/movie-details';
 import Favourites from './pages/favourites';
 import TvShows from './pages/tv-shows';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './components/theme-provider';
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       <BrowserRouter>
           <Routes>
             <Route path="/" element={<Auth />} />
@@ -17,7 +18,7 @@ function App() {
             <Route path="/tvshows" element={<TvShows />} />
           </Routes>
       </BrowserRouter>
-    </>
+    </ThemeProvider>
   )
 }
 

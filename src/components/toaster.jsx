@@ -9,18 +9,18 @@ export default function ToastMessage({ type = 'info', title, message, duration =
 
   const themes = {
     success: {
-      wrapper: 'bg-emerald-950/60 border-emerald-500/30',
-      iconText: 'text-emerald-400',
+      wrapper: 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500/30',
+      iconText: 'text-emerald-600 dark:text-emerald-400',
       icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     error: {
-      wrapper: 'bg-red-950/60 border-red-500/30',
-      iconText: 'text-red-400',
+      wrapper: 'bg-red-50 dark:bg-red-950/60 border-red-500/30',
+      iconText: 'text-red-600 dark:text-red-400',
       icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     },
     info: {
-      wrapper: 'bg-indigo-950/60 border-indigo-500/30',
-      iconText: 'text-indigo-400',
+      wrapper: 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500/30',
+      iconText: 'text-indigo-600 dark:text-indigo-400',
       icon: `<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
     }
   };
@@ -34,10 +34,10 @@ export default function ToastMessage({ type = 'info', title, message, duration =
       ${currentTheme.icon}
     </div>
     <div class="flex-1 text-sm pt-0.5">
-      ${title ? `<h4 class="font-semibold text-white mb-1 tracking-wide">${title}</h4>` : ''}
-      <p class="text-slate-300 font-medium leading-relaxed">${message}</p>
+      ${title ? `<h4 class="font-semibold text-slate-900 dark:text-white mb-1 tracking-wide">${title}</h4>` : ''}
+      <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">${message}</p>
     </div>
-    <button class="flex-shrink-0 ml-4 text-slate-400 hover:text-white transition-colors focus:outline-none pt-0.5" aria-label="Close">
+    <button class="flex-shrink-0 ml-4 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none pt-0.5" aria-label="Close">
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
     </button>
   `;
