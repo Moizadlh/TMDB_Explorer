@@ -6,10 +6,12 @@ import Footer from '../components/footer';
 import { formatRuntime, getReleaseYear } from '../utils/helpers';
 import api from "../api/api";
 import { getMovieEndpoint, getToggleFavouriteEndpoint, getMovieAccountStatesEndpoint } from '../api/api';
+import useAuthStore from '../store/auth-store';
 
 export default function MovieDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { sessionId, accountId } = useAuthStore();
     const [movie, setMovie] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isFavourite, setIsFavourite] = useState(false);
@@ -22,7 +24,6 @@ export default function MovieDetails() {
                 const params = { append_to_response: 'credits' };
                 const response = await api.get(endpoint, { params });
                 setMovie(response.data);
-                const sessionId = localStorage.getItem('tmdb_session_id');
                 if (sessionId) {
                     const statesEndpoint = getMovieAccountStatesEndpoint(id);
                     const statesParams = { session_id: sessionId };
@@ -39,8 +40,6 @@ export default function MovieDetails() {
     }, [id]);
 
     const handleToggleFavouriteStatus = async () => {
-        const sessionId = localStorage.getItem('tmdb_session_id');
-        const accountId = localStorage.getItem('tmdb_account_id');
         if (!sessionId || !accountId) {
             console.error("User is not authenticated");
             return;

@@ -1,16 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-
-const ThemeContext = createContext();
+import { useEffect } from 'react';
+import useThemeStore from '../store/theme-store';
 
 export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem('movieHubTheme');
-            if (stored) return stored;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        return 'dark';
-    });
+    const theme = useThemeStore((state) => state.theme);
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -19,24 +11,7 @@ export function ThemeProvider({ children }) {
         } else {
             root.classList.remove('dark');
         }
-        localStorage.setItem('movieHubTheme', theme);
     }, [theme]);
 
-    const toggleTheme = () => {
-        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-    };
-
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+    return children;
 }
-
-export const useTheme = () => {
-    const context = useContext(ThemeContext);
-    if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
-};

@@ -6,6 +6,7 @@ import Loader from '../components/loader';
 import { HeartIcon, HeartOutlineIcon } from '../components/icons';
 import api from "../api/api";
 import { getAccountFavouriteMoviesEndpoint } from '../api/api';
+import useAuthStore from '../store/auth-store';
 
 export default function Favourites() {
     const [allFetchedFavouriteMovies, setAllFetchedFavouriteMovies] = useState([]);
@@ -16,8 +17,7 @@ export default function Favourites() {
     const observerTarget = useRef(null);
 
     const fetchFavouriteMovies = useCallback(async (apiPage, append = false) => {
-        const sessionId = localStorage.getItem('tmdb_session_id');
-        const accountId = localStorage.getItem('tmdb_account_id');
+        const { sessionId, accountId } = useAuthStore.getState();
         if (!sessionId || !accountId) {
             setAllFetchedFavouriteMovies([]);
             setIsLoading(false);

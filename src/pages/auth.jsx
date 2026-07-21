@@ -7,8 +7,10 @@ import Loader from '../components/loader';
 import Footer from '../components/footer';
 import api from '../api/api'
 import { TOKEN_NEW_ENDPOINT, TOKEN_VALIDATE_ENDPOINT, SESSION_NEW_ENDPOINT, ACCOUNT_DETAILS_ENDPOINT } from '../api/api';
+import useAuthStore from '../store/auth-store';
 
 export default function Auth() {
+    const setAuth = useAuthStore((state) => state.setAuth);
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -43,11 +45,9 @@ export default function Auth() {
                 return console.log("Failed to create session.");
             }
             const sessionId = sessionResponse.data.session_id;
-            localStorage.setItem('tmdb_session_id', sessionId);
             const accountParams = { session_id: sessionId };
             const accountDetailsResponse = await api.get(ACCOUNT_DETAILS_ENDPOINT, { params: accountParams });
-            localStorage.setItem('tmdb_account_id', accountDetailsResponse.data.id);
-            localStorage.setItem('tmdb_username', accountDetailsResponse.data.username || userName);
+            setAuth(sessionId, accountDetailsResponse.data.id, accountDetailsResponse.data.username || userName);
             ToastMessage({ type: 'success', title: 'Login Successful', message: 'Welcome back!', duration: 2000 });
             setIsLoading(false);
             navigate("/dashboard");

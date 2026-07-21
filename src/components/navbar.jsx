@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { UserCircleIcon, SunIcon, MoonIcon, HamburgerIcon, CloseIcon } from './icons';
 import logo from '../assets/icons/logo.svg';
-import { useTheme } from './theme-provider';
+import useThemeStore from '../store/theme-store';
+import useAuthStore from '../store/auth-store';
 
 export default function Navbar() {
     const location = useLocation();
-    const { theme, toggleTheme } = useTheme();
+    const { theme, toggleTheme } = useThemeStore();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const isAuthenticated = location.pathname !== '/';
-    const userName = localStorage.getItem('tmdb_username') || 'Guest';
+    const userName = useAuthStore((state) => state.username) || 'Guest';
 
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
