@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Navbar from '../components/navbar';
 import MovieCard from '../components/movie-card';
 import Footer from '../components/footer';
@@ -6,9 +6,13 @@ import Loader from '../components/loader';
 import { MagnifyingGlassIcon } from '../components/icons';
 import api from "../api/api";
 import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../api/api';
+import debounce from "lodash.debounce";
+import { useSearchParams } from "react-router-dom";
 
 export default function Dashboard() {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const urlSearchQuery = searchParams.get("search") || "";
+    const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
     const [allFetchedMediaItems, setAllFetchedMediaItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -37,17 +41,42 @@ export default function Dashboard() {
         }
     }, []);
 
+    const updateDebouncedSearch = useMemo(() =>
+            debounce((value) => {
+                if (value.trim()) {
+                    setSearchParams({ search: value });
+                } else {
+                    setSearchParams({});
+                }
+            }, 500),
+        [setSearchParams]
+    );
+
     useEffect(() => {
-        if (!isInitialComponentLoad.current) {
-            setIsSearching(true);
-        }
-        setCurrentTmdbApiPage(1);
-        if (searchQuery) setAllFetchedMediaItems([]);
-        fetchMediaItems(searchQuery, 1, false);
-        setIsSearching(false);
-        
-        return (() => {});
-    }, [searchQuery, fetchMediaItems]);
+        return () => updateDebouncedSearch.cancel();
+    }, [updateDebouncedSearch]);
+
+    useEffect(() => {
+        setSearchQuery(urlSearchQuery);
+    }, [urlSearchQuery]);
+
+    useEffect(() => {
+        const searchMovies = async () => {
+            if (!isInitialComponentLoad.current) {
+                setIsSearching(true);
+            }
+            setCurrentTmdbApiPage(1);
+            if (urlSearchQuery) {
+                setAllFetchedMediaItems([]);
+            }
+            try {
+                await fetchMediaItems(urlSearchQuery, 1, false);
+            } finally {
+                setIsSearching(false);
+            }
+        };
+        searchMovies();
+    }, [urlSearchQuery, fetchMediaItems]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -55,7 +84,7 @@ export default function Dashboard() {
                 if (entries[0].isIntersecting && hasMore && !isLoading && !isSearching) {
                     const nextTmdbPage = currentTmdbApiPage + 1;
                     setCurrentTmdbApiPage(nextTmdbPage);
-                    fetchMediaItems(searchQuery, nextTmdbPage, true);
+                    fetchMediaItems(urlSearchQuery, nextTmdbPage, true);
                 }
             },
             { threshold: 1.0 }
@@ -70,7 +99,7 @@ export default function Dashboard() {
                 observer.unobserve(observerTarget.current);
             }
         };
-    }, [hasMore, isLoading, isSearching, currentTmdbApiPage, searchQuery, fetchMediaItems]);
+    }, [hasMore, isLoading, isSearching, currentTmdbApiPage, urlSearchQuery, fetchMediaItems]);
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-indigo-500/30 relative transition-colors duration-300">
@@ -101,7 +130,11 @@ export default function Dashboard() {
                             type="text" 
                             placeholder="Search movies..." 
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setSearchQuery(value);
+                                updateDebouncedSearch(value);
+                            }}
                             className="w-full bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700/50 rounded-full py-2.5 pl-10 pr-4 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900"
                         />
                     </div>
