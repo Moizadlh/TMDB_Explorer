@@ -4,7 +4,6 @@ import { getReleaseYear, getImageUrl } from '../utils/helpers';
 
 export default function MovieCard({ movie = null, tvShow = null }) {
     const navigate = useNavigate();
-
     const imageUrl = movie ? getImageUrl(movie.poster_path) : getImageUrl(tvShow.poster_path);
     const releaseYear = movie ? getReleaseYear(movie.release_date) : getReleaseYear(tvShow.first_air_date);
 

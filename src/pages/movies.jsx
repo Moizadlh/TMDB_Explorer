@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import MovieCard from '../components/movie-card';
 import Footer from '../components/footer';
 import Loader from '../components/loader';
+import Input from '../components/input';
 import { MagnifyingGlassIcon } from '../components/icons';
 import api from "../api/api";
 import { SEARCH_MOVIE_ENDPOINT, POPULAR_MOVIE_ENDPOINT } from '../api/api';
@@ -118,26 +119,23 @@ export default function Movies() {
                             {searchQuery ? `Showing results for "${searchQuery}"` : 'Discover trending movies right now.'}
                         </p>
                     </div>
-                    <div className="relative w-full md:w-80 group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">
-                            {isSearching ? (
-                                <div className="w-4 h-4 border-2 border-slate-300 dark:border-slate-500 border-t-indigo-500 rounded-full animate-spin"></div>
-                            ) : (
-                                <MagnifyingGlassIcon className="h-5 w-5" />
-                            )}
-                        </div>
-                        <input 
-                            type="text" 
-                            placeholder="Search movies..." 
-                            value={searchQuery}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                setSearchQuery(value);
-                                updateDebouncedSearch(value);
-                            }}
-                            className="w-full bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700/50 rounded-full py-2.5 pl-10 pr-4 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm dark:shadow-inner placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900"
-                        />
-                    </div>
+                    <Input 
+                        type="text" 
+                        placeholder="Search movies..." 
+                        value={searchQuery}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setSearchQuery(value);
+                            updateDebouncedSearch(value);
+                        }}
+                        icon={isSearching ? (
+                            <div className="w-4 h-4 border-2 border-slate-300 dark:border-slate-500 border-t-indigo-500 rounded-full animate-spin"></div>
+                        ) : (
+                            <MagnifyingGlassIcon className="h-5 w-5" />
+                        )}
+                        containerClassName="w-full md:w-80"
+                        className="!rounded-full shadow-sm dark:shadow-inner"
+                    />
                 </div>
 
                 {(isLoading || isSearching) && !isInitialComponentLoad.current && allFetchedMediaItems.length === 0 ? (

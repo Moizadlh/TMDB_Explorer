@@ -1,4 +1,6 @@
 import Navbar from '../components/navbar'
+import Button from '../components/button';
+import Input from '../components/input';
 import loginBanner from "../assets/images/auth-banner.png";
 import { useState } from 'react';
 import ToastMessage from '../components/toaster';
@@ -132,45 +134,43 @@ export default function Auth() {
                                 </div>
 
                                 <div className="flex flex-col gap-6">
-                                    <div className="group/input">
-                                        <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1" htmlFor="login-username">Username</label>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:bg-slate-50 dark:focus-within:bg-slate-900 shadow-inner">
-                                            <div className="pl-4 pr-3 text-slate-400 dark:text-slate-500 group-focus-within/input:text-indigo-600 dark:group-focus-within/input:text-indigo-400 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-                                                    <path d="M20 21a8 8 0 0 0-16 0"/>
-                                                    <circle cx="12" cy="7" r="4"/>
-                                                </svg>
-                                            </div>
-                                            <input type="text" id="login-username" {...registerLogin("username")} disabled={isLoading} className="w-full py-3.5 pr-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50" placeholder="your username" />
-                                        </div>
-                                        {loginErrors.username && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{loginErrors.username.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="login-username"
+                                        label="Username"
+                                        placeholder="your username"
+                                        disabled={isLoading}
+                                        error={loginErrors.username?.message}
+                                        icon={
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                                                <path d="M20 21a8 8 0 0 0-16 0"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                        }
+                                        {...registerLogin("username")}
+                                    />
 
-                                    <div className="group/input">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider ml-1" htmlFor="login-password">Password</label>
-                                        </div>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:bg-slate-50 dark:focus-within:bg-slate-900 shadow-inner">
-                                            <div className="pl-4 pr-3 text-slate-400 dark:text-slate-500 group-focus-within/input:text-indigo-600 dark:group-focus-within/input:text-indigo-400 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                                </svg>
-                                            </div>
-                                            <input type="password" id="login-password" {...registerLogin("password")} disabled={isLoading} className="w-full py-3.5 pr-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50" placeholder="••••••••" />
-                                        </div>
-                                        {loginErrors.password && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{loginErrors.password.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="login-password"
+                                        label="Password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        disabled={isLoading}
+                                        error={loginErrors.password?.message}
+                                        icon={
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                            </svg>
+                                        }
+                                        {...registerLogin("password")}
+                                    />
                                     <a href="#" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors inline-block text-right">Forgot password?</a>
                                 </div>
 
-                                <button type="submit" disabled={isLoading} className="mt-8 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-bold text-sm shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group/btn disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <span className="relative z-10">{isLoading ? 'Signing In...' : 'Sign In'}</span>
-                                    <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[25deg] group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
-                                </button>
+                                <Button type="submit" disabled={isLoading} variant="auth" className="mt-8" text={isLoading ? 'Signing In...' : 'Sign In'} />
                                 
                                 <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
-                                    Don't have an account? <button type="button" onClick={() => setIsLoginView(false)} className="font-semibold text-indigo-600 dark:text-white hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors">Sign up</button>
+                                    Don't have an account? <Button type="button" onClick={() => setIsLoginView(false)} variant="link" text="Sign up" />
                                 </p>
                             </form>
                         ) : (
@@ -181,21 +181,24 @@ export default function Auth() {
                                 </div>
 
                                 <div className="flex flex-col gap-4">
-                                    <div className="group/input">
-                                        <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1" htmlFor="signup-username">Username</label>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 shadow-inner">
-                                            <input type="text" id="signup-username" {...registerSignup("username")} disabled={isLoading} className="w-full py-2.5 px-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50 text-sm" placeholder="username" />
-                                        </div>
-                                        {signupErrors.username && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{signupErrors.username.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="signup-username"
+                                        label="Username"
+                                        placeholder="username"
+                                        disabled={isLoading}
+                                        error={signupErrors.username?.message}
+                                        {...registerSignup("username")}
+                                    />
 
-                                    <div className="group/input">
-                                        <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1" htmlFor="signup-email">Email</label>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 shadow-inner">
-                                            <input type="email" id="signup-email" {...registerSignup("email")} disabled={isLoading} className="w-full py-2.5 px-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50 text-sm" placeholder="email@example.com" />
-                                        </div>
-                                        {signupErrors.email && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{signupErrors.email.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="signup-email"
+                                        label="Email"
+                                        type="email"
+                                        placeholder="email@example.com"
+                                        disabled={isLoading}
+                                        error={signupErrors.email?.message}
+                                        {...registerSignup("email")}
+                                    />
 
                                     <div className="group/input">
                                         <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Gender</label>
@@ -213,30 +216,31 @@ export default function Auth() {
                                         {signupErrors.gender && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{signupErrors.gender.message}</p>}
                                     </div>
 
-                                    <div className="group/input">
-                                        <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1" htmlFor="signup-password">Password</label>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 shadow-inner">
-                                            <input type="password" id="signup-password" {...registerSignup("password")} disabled={isLoading} className="w-full py-2.5 px-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50 text-sm" placeholder="••••••••" />
-                                        </div>
-                                        {signupErrors.password && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{signupErrors.password.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="signup-password"
+                                        label="Password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        disabled={isLoading}
+                                        error={signupErrors.password?.message}
+                                        {...registerSignup("password")}
+                                    />
 
-                                    <div className="group/input">
-                                        <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1" htmlFor="signup-confirm-password">Confirm Password</label>
-                                        <div className="relative flex items-center bg-white dark:bg-slate-950/50 border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 shadow-inner">
-                                            <input type="password" id="signup-confirm-password" {...registerSignup("confirmPassword")} disabled={isLoading} className="w-full py-2.5 px-4 bg-transparent outline-none text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 font-medium disabled:opacity-50 text-sm" placeholder="••••••••" />
-                                        </div>
-                                        {signupErrors.confirmPassword && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{signupErrors.confirmPassword.message}</p>}
-                                    </div>
+                                    <Input 
+                                        id="signup-confirm-password"
+                                        label="Confirm Password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        disabled={isLoading}
+                                        error={signupErrors.confirmPassword?.message}
+                                        {...registerSignup("confirmPassword")}
+                                    />
                                 </div>
 
-                                <button type="submit" disabled={isLoading} className="mt-6 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-bold text-sm shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group/btn disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <span className="relative z-10">{isLoading ? 'Signing Up...' : 'Sign Up'}</span>
-                                    <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[25deg] group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
-                                </button>
+                                <Button type="submit" disabled={isLoading} variant="auth" className="mt-6" text={isLoading ? 'Signing Up...' : 'Sign Up'} />
                                 
                                 <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-                                    Already have an account? <button type="button" onClick={() => setIsLoginView(true)} className="font-semibold text-indigo-600 dark:text-white hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors">Log in</button>
+                                    Already have an account? <Button type="button" onClick={() => setIsLoginView(true)} variant="link" text="Log in" />
                                 </p>
                             </form>
                         )}
