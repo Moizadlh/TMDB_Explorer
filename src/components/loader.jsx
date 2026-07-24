@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Loader({ fullScreen = false, text = "LOADING..." }) {
     const loaderElementContent = (
         <div className="flex flex-col items-center justify-center gap-5">

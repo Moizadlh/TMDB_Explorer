@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { UserCircleIcon, SunIcon, MoonIcon, HamburgerIcon, CloseIcon } from './icons';
-import logo from '../assets/icons/logo.svg';
-import useThemeStore from '../store/theme-store';
-import useAuthStore from '../store/auth-store';
-import Button from './button';
+
+import Button from '@/components/button';
+import ThemeToggle from '@/components/theme-toggle';
+import { UserCircleIcon, HamburgerIcon, CloseIcon, LogoutIcon } from '@/components/icons';
+
+import useAuthStore from '@/store/auth-store';
+import { IMAGE_URLS, NAV_LINKS } from '@/utils/constants';
 
 export default function Navbar({ onGetStartedClick, onLoginClick }) {
     const location = useLocation();
-    const { theme, toggleTheme } = useThemeStore();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const isAuthenticated = location.pathname !== '/';
+    const navigate = useNavigate();
+    const publicRoutes = ['/', '/signup'];
+    const isAuthenticated = !publicRoutes.includes(location.pathname);
+
     const userName = useAuthStore((state) => state.username) || 'Guest';
     const clearAuth = useAuthStore((state) => state.clearAuth);
-    const navigate = useNavigate();
+
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
     const handleLogout = () => {
@@ -25,13 +29,18 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
 
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
+    const NAV_AUTH_BUTTONS = [
+        { id: 'get-started', text: 'Get Started', onClick: onGetStartedClick, variant: 'ghost' },
+        { id: 'login', text: 'Login', onClick: onLoginClick, variant: 'primary' }
+    ];
+
     return (
         <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center">
                 <div className="flex items-center gap-3 cursor-pointer group">
                     <div className="relative">
                         <div className="absolute inset-0 bg-indigo-500 rounded-full blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-500"></div>
-                        <img src={logo} className="h-10 w-10 relative z-10 transition-transform duration-500 group-hover:scale-110" alt="MovieHub logo" />
+                        <img src={IMAGE_URLS.LOGO} className="h-10 w-10 relative z-10 transition-transform duration-500 group-hover:scale-110" alt="MovieHub logo" />
                     </div>
                     <div className="flex flex-col justify-center">
                         <p className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 m-0 leading-tight">MovieHub</p> 
@@ -41,46 +50,20 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                 {isAuthenticated ? (
                     <>
                         <nav className="hidden md:flex items-center gap-8">
-                            <NavLink 
-                                to="/home" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-                            >
-                                Home
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
-                            </NavLink>
-                            <NavLink 
-                                to="/movies" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-                            >
-                                Movies
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
-                            </NavLink>
-                            <NavLink 
-                                to="/tvshows" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/home' && location.pathname !== '/movies' ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-                            >
-                                Tv Shows
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
-                            </NavLink>
-                            <NavLink 
-                                to="/favourites" 
-                                className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-                            >
-                                Favourites 
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
-                            </NavLink>
+                            {NAV_LINKS?.map((link) => (
+                                <NavLink 
+                                    key={link.url}
+                                    to={link.url} 
+                                    className={({ isActive }) => `text-sm font-semibold transition-colors duration-300 relative group ${isActive ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                                >
+                                    {link.name}
+                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full group-[.active]:w-full"></span>
+                                </NavLink>
+                            ))}
                         </nav>
 
                         <div className="hidden md:flex items-center gap-4">
-                            <Button 
-                                onClick={toggleTheme}
-                                variant="icon"
-                                className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-                                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-                                title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-                            >
-                                {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
-                            </Button>
+                            <ThemeToggle className="rounded-full" />
                             <div className="relative flex items-center gap-3">
                                 <Button onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} variant="custom" className="flex items-center gap-3 focus:outline-none group">
                                     <div className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden group-hover:border-indigo-500 transition-colors">
@@ -98,7 +81,7 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                                                 <p className="text-xs text-slate-500 dark:text-slate-400">Movie Enthusiast</p>
                                             </div>
                                             <Button onClick={handleLogout} variant="custom" className="px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors w-full flex items-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                                <LogoutIcon className="w-4 h-4" />
                                                 Logout
                                             </Button>
                                         </div>
@@ -109,27 +92,14 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                     </>
                 ) : (
                     <div className="hidden md:flex items-center gap-4">
-                        <Button 
-                            onClick={toggleTheme}
-                            variant="icon"
-                            className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-                            aria-label="Toggle Theme"
-                        >
-                            {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
-                        </Button>
-                        <Button onClick={onGetStartedClick} text="Get Started" variant="getstarted" />
-                        <Button onClick={onLoginClick} text="Login" variant="login" />
+                        <ThemeToggle className="rounded-full" />
+                        {NAV_AUTH_BUTTONS?.map((action) => (
+                            <Button key={action.id} onClick={action.onClick} text={action.text} variant={action.variant} size="sm" />
+                        ))}
                     </div>
                 )}
                 <div className="md:hidden flex items-center gap-2">
-                    <Button 
-                        onClick={toggleTheme}
-                        variant="icon"
-                        className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-                        aria-label="Toggle Theme"
-                    >
-                        {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
-                    </Button>
+                    <ThemeToggle className="rounded-full" />
                     <Button 
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         variant="icon"
@@ -155,20 +125,35 @@ export default function Navbar({ onGetStartedClick, onLoginClick }) {
                                     </div>
                                 </div>
                                 <Button onClick={handleLogout} variant="icon" className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors" aria-label="Logout">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                    <LogoutIcon className="w-5 h-5" />
                                 </Button>
                             </div>
                             <nav className="flex flex-col gap-1 pb-2">
-                                <NavLink onClick={closeMobileMenu} to="/home" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Home</NavLink>
-                                <NavLink onClick={closeMobileMenu} to="/movies" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Movies</NavLink>
-                                <NavLink onClick={closeMobileMenu} to="/tvshows" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive && location.pathname !== '/' && location.pathname !== '/favourites' && location.pathname !== '/home' && location.pathname !== '/movies' ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Tv Shows</NavLink>
-                                <NavLink onClick={closeMobileMenu} to="/favourites" className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}>Favourites</NavLink>
+                                {NAV_LINKS?.map((link) => (
+                                    <NavLink 
+                                        key={link.url}
+                                        onClick={closeMobileMenu} 
+                                        to={link.url} 
+                                        className={({ isActive }) => `px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'}`}
+                                    >
+                                        {link.name}
+                                    </NavLink>
+                                ))}
                             </nav>
                         </>
                     ) : (
                         <div className="flex flex-col gap-3 pb-2 pt-1">
-                            <Button onClick={() => { if(onGetStartedClick) onGetStartedClick(); closeMobileMenu(); }} text="Get Started" variant="mobileGetStarted" />
-                            <Button onClick={() => { if(onLoginClick) onLoginClick(); closeMobileMenu(); }} text="Login" variant="mobileLogin" />
+                            {NAV_AUTH_BUTTONS?.map((action) => (
+                                <Button 
+                                    key={action.id} 
+                                    onClick={() => { if(action.onClick) action.onClick(); closeMobileMenu(); }} 
+                                    text={action.text} 
+                                    variant={action.variant}
+                                    fullWidth
+                                    size="md"
+                                    shape="rounded"
+                                />
+                            ))}
                         </div>
                     )}
                 </div>

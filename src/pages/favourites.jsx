@@ -1,82 +1,28 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import Navbar from '../components/navbar';
-import MovieCard from '../components/movie-card';
-import Footer from '../components/footer';
-import Loader from '../components/loader';
-import { HeartIcon, HeartOutlineIcon } from '../components/icons';
-import api from "../api/api";
-import { getAccountFavouriteMoviesEndpoint } from '../api/api';
-import useAuthStore from '../store/auth-store';
+import { useFavourites } from "@/hooks/use-favourites";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import useAuthStore from "@/store/auth-store";
+
+import Navbar from '@/components/navbar';
+import MovieCard from '@/components/movie-card';
+import Footer from '@/components/footer';
+import Loader from '@/components/loader';
+import { HeartIcon, HeartOutlineIcon } from '@/components/icons';
 
 export default function Favourites() {
-    const [allFetchedFavouriteMovies, setAllFetchedFavouriteMovies] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [currentTmdbApiPage, setCurrentTmdbApiPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const isInitialComponentLoad = useRef(true);
-    const observerTarget = useRef(null);
+    const { sessionId, accountId } = useAuthStore();
 
-    const fetchFavouriteMovies = useCallback(async (apiPage, append = false) => {
-        const { sessionId, accountId } = useAuthStore.getState();
-        if (!sessionId || !accountId) {
-            setAllFetchedFavouriteMovies([]);
-            setIsLoading(false);
-            if (isInitialComponentLoad.current) isInitialComponentLoad.current = false;
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const endpoint = getAccountFavouriteMoviesEndpoint(accountId);
-            const params = { 
-                session_id: sessionId,
-                page: apiPage
-            };
-            const response = await api.get(endpoint, { params });
-            const results = response.data.results || [];
-            setAllFetchedFavouriteMovies(prev => append ? [...prev, ...results] : results);
-            setHasMore(response.data.page < response.data.total_pages);
-        } catch (error) {
-            console.error("Failed to fetch favourite movies:", error);
-        } finally {
-            setIsLoading(false);
-            if (isInitialComponentLoad.current) isInitialComponentLoad.current = false;
-        }
-    }, []);
+    const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useFavourites();
+    const favouriteMovies = data?.pages?.flatMap((page) => page?.results) ?? [];
 
-    useEffect(() => {
-        setCurrentTmdbApiPage(1);
-        setAllFetchedFavouriteMovies([]);
-        fetchFavouriteMovies(1, false);
-    }, [fetchFavouriteMovies]);
+    const observerTarget = useInfiniteScroll({ hasNextPage, isFetchingNextPage, fetchNextPage });
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                if (entries[0].isIntersecting && hasMore && !isLoading && !isInitialComponentLoad.current) {
-                    const nextTmdbPage = currentTmdbApiPage + 1;
-                    setCurrentTmdbApiPage(nextTmdbPage);
-                    fetchFavouriteMovies(nextTmdbPage, true);
-                }
-            },
-            { threshold: 1.0 }
-        );
-
-        if (observerTarget.current) {
-            observer.observe(observerTarget.current);
-        }
-
-        return () => {
-            if (observerTarget.current) {
-                observer.unobserve(observerTarget.current);
-            }
-        };
-    }, [hasMore, isLoading, currentTmdbApiPage, fetchFavouriteMovies]);
+    const isMissingAuth = !sessionId || !accountId;
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-indigo-500/30 relative transition-colors duration-300">
             <Navbar />
             
-            {isLoading && allFetchedFavouriteMovies.length === 0 && isInitialComponentLoad.current && (
+            {isLoading && favouriteMovies?.length === 0 && !isMissingAuth && (
                 <Loader fullScreen={true} text="FETCHING FAVOURITES..." />
             )}
 
@@ -91,23 +37,29 @@ export default function Favourites() {
                     </p>
                 </div>
 
-                {!isLoading && allFetchedFavouriteMovies.length === 0 && !isInitialComponentLoad.current ? (
+                {!isLoading && favouriteMovies?.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400">
                         <HeartOutlineIcon className="h-16 w-16 mb-6 opacity-20 text-rose-500" />
-                        <p className="text-xl font-medium text-slate-700 dark:text-slate-300">No favourites yet.</p>
-                        <p className="text-sm mt-2">Explore movies and click the heart icon to add them here.</p>
+                        <p className="text-xl font-medium text-slate-700 dark:text-slate-300">
+                            {isMissingAuth ? "Please log in to view your favourites." : "No favourites yet."}
+                        </p>
+                        {!isMissingAuth && (
+                            <p className="text-sm mt-2">Explore movies and click the heart icon to add them here.</p>
+                        )}
                     </div>
                 ) : (
                     <>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 min-h-[400px]">
-                            {allFetchedFavouriteMovies.map((movie, index) => (
-                                <MovieCard key={`${movie.id}-${index}`} movie={movie} />
+                            {favouriteMovies?.map((movie, index) => (
+                                <MovieCard key={`${movie?.id}-${index}`} movie={movie} />
                             ))}
                         </div>
 
-                        <div ref={observerTarget} className="h-10 mt-8 flex justify-center items-center">
-                            {isLoading && hasMore && <Loader fullScreen={false} text="LOADING MORE..." />}
-                        </div>
+                        {hasNextPage && (
+                            <div ref={observerTarget} className="h-10 mt-8 flex justify-center items-center">
+                                {isFetchingNextPage && <Loader fullScreen={false} text="LOADING MORE..." />}
+                            </div>
+                        )}
                     </>
                 )}
             </main>

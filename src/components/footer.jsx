@@ -1,6 +1,3 @@
-import logo from '../assets/icons/logo.svg';
-import { NavLink } from 'react-router-dom';
-
 export default function Footer() {
     return (
         <footer className="w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-800/50 pt-0 pb-8 mt-auto transition-colors duration-300">

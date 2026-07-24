@@ -1,68 +1,22 @@
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '../components/icons';
-import Loader from '../components/loader';
-import Footer from '../components/footer';
-import { formatRuntime, getReleaseYear } from '../utils/helpers';
-import api from "../api/api";
-import { getMovieEndpoint, getToggleFavouriteEndpoint, getMovieAccountStatesEndpoint } from '../api/api';
-import useAuthStore from '../store/auth-store';
-import Button from '../components/button';
-import GenreList from '../components/genre-list';
-import CastCard from '../components/cast-card';
+
+import { useMovieDetails } from '@/hooks/use-movie-details';
+
+import Loader from '@/components/loader';
+import Footer from '@/components/footer';
+import Button from '@/components/button';
+import GenreList from '@/components/genre-list';
+import CastCard from '@/components/cast-card';
+import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '@/components/icons';
+
+import { formatRuntime, getReleaseYear, getImageUrl } from '@/utils/index';
+import { size } from 'zod';
 
 export default function MovieDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { sessionId, accountId } = useAuthStore();
-    const [movie, setMovie] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isFavourite, setIsFavourite] = useState(false);
-
-    useEffect(() => {
-        const fetchMovieDetails = async () => {
-            setIsLoading(true);
-            try {
-                const endpoint = getMovieEndpoint(id);
-                const params = { append_to_response: 'credits' };
-                const response = await api.get(endpoint, { params });
-                setMovie(response.data);
-                if (sessionId) {
-                    const statesEndpoint = getMovieAccountStatesEndpoint(id);
-                    const statesParams = { session_id: sessionId };
-                    const accountStatesResponse = await api.get(statesEndpoint, { params: statesParams });
-                    setIsFavourite(accountStatesResponse.data.favorite);
-                }
-            } catch (error) {
-                console.error("Failed to fetch movie details:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchMovieDetails();
-    }, [id]);
-
-    const handleToggleFavouriteStatus = async () => {
-        if (!sessionId || !accountId) {
-            console.error("User is not authenticated");
-            return;
-        }
-        const newFavouriteStatus = !isFavourite;
-        setIsFavourite(newFavouriteStatus);
-        try {
-            const endpoint = getToggleFavouriteEndpoint(accountId);
-            const payload = {
-                media_type: 'movie',
-                media_id: movie.id,
-                favorite: newFavouriteStatus
-            };
-            const params = { session_id: sessionId };
-            await api.post(endpoint, payload, { params });
-        } catch (error) {
-            console.error("Failed to toggle favourite:", error);
-            setIsFavourite(!newFavouriteStatus);
-        }
-    };
+    
+    const { movie, isLoading, isFavourite, toggleFavouriteStatus, isTogglingFavourite } = useMovieDetails(id);
 
     if (isLoading) {
         return <Loader fullScreen={true} text="LOADING MOVIE..." />;
@@ -83,14 +37,8 @@ export default function MovieDetails() {
         );
     }
 
-    const backdropUrl = movie.backdrop_path 
-        ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
-        : null;
-        
-    const posterUrl = movie.poster_path
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-        : null;
-
+    const backdropUrl = getImageUrl(movie.backdrop_path , 'original');
+    const posterUrl = getImageUrl(movie.poster_path);
     const releaseYear = getReleaseYear(movie.release_date);
     const runtimeFormatted = formatRuntime(movie.runtime);
 
@@ -166,18 +114,18 @@ export default function MovieDetails() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-4 mb-10">
-                            <Button variant="detailsPrimary">
+                            <Button variant="secondary" size="lg">
                                 <PlayIcon className="w-6 h-6" />
                                 Watch Now
                             </Button>
                             <Button 
-                                onClick={handleToggleFavouriteStatus}
+                                onClick={() => !isTogglingFavourite && toggleFavouriteStatus()}
                                 variant="icon"
                                 className={`flex items-center justify-center w-14 h-14 rounded-full border transition-all ${
                                     isFavourite 
                                     ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/50 text-rose-500 shadow-[0_4px_20px_rgba(244,63,94,0.1)] dark:shadow-[0_0_20px_rgba(244,63,94,0.2)]' 
                                     : 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-700/50 text-slate-400 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm'
-                                }`}
+                                } ${isTogglingFavourite ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {isFavourite ? (
                                     <HeartIcon className="w-6 h-6 animate-[ping_0.3s_ease-in-out_1]" />
@@ -200,7 +148,7 @@ export default function MovieDetails() {
                     <div className="mt-16 border-t border-slate-200 dark:border-slate-800/50 pt-12">
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Top Cast</h3>
                         <div className="flex overflow-x-auto gap-4 pb-6 snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                            {movie.credits.cast.slice(0, 10).map(actor => (
+                            {movie?.credits?.cast?.slice(0, 10)?.map(actor => (
                                 <CastCard key={actor.id} actor={actor} />
                             ))}
                         </div>

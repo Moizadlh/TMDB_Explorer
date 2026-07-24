@@ -1,4 +1,4 @@
-import movieImagePlaceholder from "../assets/images/movie-image-placeholder.jpg";
+import movieImagePlaceholder from "@/assets/images/movie-image-placeholder.jpg";
 
 export const formatRuntime = (runtime) => {
     if (!runtime) return '0m';
@@ -14,3 +14,7 @@ export const getReleaseYear = (dateString) => {
 export const getImageUrl = (imagePath, size = 'w500') => {
     return imagePath ? `https://image.tmdb.org/t/p/${size}${imagePath}` : movieImagePlaceholder;
 };
+
+export const formatDecimal = (number, digits) => {
+  return Number(number.toFixed(digits));
+}
