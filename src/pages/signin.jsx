@@ -11,7 +11,7 @@ import Footer from '@/components/footer';
 
 import { useLogin } from '@/hooks/use-login';
 import useAuthStore from '@/store/auth-store';
-import { LOGIN_SCHEMA } from '@/utils/schemas';
+import { LOGIN_SCHEMA } from '@/schema/login';
 import { IMAGE_URLS, LOGIN_INPUTS } from '@/utils/constants';
 
 export default function Signin() {
@@ -81,14 +81,14 @@ export default function Signin() {
                             <div className="flex flex-col gap-6">
                                 {LOGIN_INPUTS?.map((input) => (
                                     <Input
-                                        key={input.id}
-                                        id={input.id}
-                                        label={input.label}
-                                        type={input.type}
-                                        placeholder={input.placeholder}
+                                        key={input?.id}
+                                        id={input?.id}
+                                        label={input?.label}
+                                        type={input?.type}
+                                        placeholder={input?.placeholder}
                                         disabled={isPending}
-                                        error={errors[input.name]?.message}
-                                        icon={input.icon ? <input.icon className="w-5 h-5" /> : undefined}
+                                        error={errors[input?.name]?.message}
+                                        icon={input?.icon ? <input.icon className="w-5 h-5" /> : undefined}
                                         {...register(input.name)}
                                     />
                                 ))}

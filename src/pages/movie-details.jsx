@@ -37,10 +37,10 @@ export default function MovieDetails() {
         );
     }
 
-    const backdropUrl = getImageUrl(movie.backdrop_path , 'original');
-    const posterUrl = getImageUrl(movie.poster_path);
-    const releaseYear = getReleaseYear(movie.release_date);
-    const runtimeFormatted = formatRuntime(movie.runtime);
+    const backdropUrl = getImageUrl(movie?.backdrop_path , 'original');
+    const posterUrl = getImageUrl(movie?.poster_path);
+    const releaseYear = getReleaseYear(movie?.release_date);
+    const runtimeFormatted = formatRuntime(movie?.runtime);
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-indigo-500/30 overflow-x-hidden transition-colors duration-300">
@@ -61,7 +61,7 @@ export default function MovieDetails() {
                 {backdropUrl ? (
                     <img 
                         src={backdropUrl} 
-                        alt={`${movie.title} backdrop`} 
+                        alt={`${movie?.title} backdrop`} 
                         className="w-full h-full object-cover object-top"
                     />
                 ) : (
@@ -79,7 +79,7 @@ export default function MovieDetails() {
                     <div className="w-48 md:w-72 flex-shrink-0 mx-auto md:mx-0 -mt-16 md:mt-0">
                         <div className="rounded-2xl overflow-hidden border border-slate-300/50 dark:border-slate-700/50 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-100 dark:bg-slate-900 aspect-[2/3] transition-colors duration-300">
                             {posterUrl ? (
-                                <img src={posterUrl} alt={movie.title} className="w-full h-full object-cover" />
+                                <img src={posterUrl} alt={movie?.title} className="w-full h-full object-cover" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                     <span className="text-slate-400 dark:text-slate-500">No Image</span>
@@ -90,18 +90,18 @@ export default function MovieDetails() {
 
                     <div className="flex-1 flex flex-col justify-end pt-4 md:pt-10">
                         <div className="mb-4">
-                            <GenreList genres={movie.genres} />
+                            <GenreList genres={movie?.genres} />
                         </div>
 
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white mb-4 leading-tight">
-                            {movie.title}
+                            {movie?.title}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-slate-400 font-medium mb-8">
                             <div className="flex items-center gap-1.5">
                                 <StarIcon className="w-5 h-5 text-amber-500 dark:text-amber-400" />
-                                <span className="text-slate-900 dark:text-white text-base font-bold">{movie.vote_average?.toFixed(1)}</span>
-                                <span>({movie.vote_count} votes)</span>
+                                <span className="text-slate-900 dark:text-white text-base font-bold">{movie?.vote_average?.toFixed(1)}</span>
+                                <span>({movie?.vote_count} votes)</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <CalendarIcon className="w-5 h-5 opacity-70" />
@@ -144,12 +144,12 @@ export default function MovieDetails() {
                     </div>
                 </div>
 
-                {movie.credits?.cast?.length > 0 && (
+                {movie?.credits?.cast?.length > 0 && (
                     <div className="mt-16 border-t border-slate-200 dark:border-slate-800/50 pt-12">
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Top Cast</h3>
                         <div className="flex overflow-x-auto gap-4 pb-6 snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             {movie?.credits?.cast?.slice(0, 10)?.map(actor => (
-                                <CastCard key={actor.id} actor={actor} />
+                                <CastCard key={actor?.id} actor={actor} />
                             ))}
                         </div>
                     </div>

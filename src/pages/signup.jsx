@@ -9,7 +9,7 @@ import Input from '@/components/input';
 import Loader from '@/components/loader';
 import Footer from '@/components/footer';
 
-import { SIGNUP_SCHEMA } from '@/utils/schemas';
+import { SIGNUP_SCHEMA } from '@/schema/signup';
 import { IMAGE_URLS, SIGNUP_INPUTS } from '@/utils/constants';
 
 export default function Signup() {
@@ -80,13 +80,13 @@ export default function Signup() {
 
                                     return (
                                         <Input 
-                                            key={input.id}
-                                            id={input.id}
-                                            label={input.label}
-                                            type={input.type}
-                                            placeholder={input.placeholder}
+                                            key={input?.id}
+                                            id={input?.id}
+                                            label={input?.label}
+                                            type={input?.type}
+                                            placeholder={input?.placeholder}
                                             disabled={isPending}
-                                            error={errors[input.name]?.message}
+                                            error={errors[input?.name]?.message}
                                             {...register(input.name)}
                                         />
                                     );
