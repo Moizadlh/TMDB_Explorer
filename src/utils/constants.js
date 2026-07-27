@@ -1,7 +1,7 @@
 import loginBanner from '@/assets/images/auth-banner.png';
 import logo from '@/assets/icons/logo.svg';
 
-import { UserOutline , LockOutline } from '@/components/icons';
+import { UserOutline , LockOutline } from '@/components/Icons';
 
 export const IMAGE_URLS = {
     LOGO: logo , 
