@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
-import Signin from '@/pages/signin';
-import Signup from '@/pages/signup';
-import Home from '@/pages/home';
-import Movies from '@/pages/movies';
-import MovieDetails from '@/pages/movie-details';
-import Favourites from '@/pages/favourites';
-import TvShows from '@/pages/tv-shows';
+import Signin from '@/pages/SignIn';
+import Signup from '@/pages/SignUp';
+import Home from '@/pages/Home';
+import Movies from '@/pages/Movies';
+import MovieDetails from '@/pages/MovieDetails';
+import Favourites from '@/pages/Favourites';
+import TvShows from '@/pages/TvShows';
 
 function App() {
   return (

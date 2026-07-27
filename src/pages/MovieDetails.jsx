@@ -1,13 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { useMovieDetails } from '@/hooks/use-movie-details';
+import { useMovieDetails } from '@/hooks/useMovieDetails';
 
-import Loader from '@/components/loader';
-import Footer from '@/components/footer';
-import Button from '@/components/button';
-import GenreList from '@/components/genre-list';
-import CastCard from '@/components/cast-card';
-import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '@/components/icons';
+import Loader from '@/components/Loader';
+import Footer from '@/components/Footer';
+import Button from '@/components/Button';
+import GenreList from '@/components/GenreList';
+import CastCard from '@/components/CastCard';
+import { StarIcon, PlayIcon, HeartIcon, ArrowLeftIcon, ClockIcon, CalendarIcon, HeartOutlineIcon } from '@/components/Icons';
 
 import { formatRuntime, getReleaseYear, getImageUrl } from '@/utils/index';
 import { size } from 'zod';

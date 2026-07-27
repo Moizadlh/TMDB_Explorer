@@ -1,7 +1,7 @@
-import useThemeStore from '@/store/theme-store';
+import useThemeStore from '@/store/themeStore';
 
-import Button from '@/components/button';
-import { SunIcon, MoonIcon } from '@/components/icons';
+import Button from '@/components/Button';
+import { SunIcon, MoonIcon } from '@/components/Icons';
 
 export default function ThemeToggle({ className = '' }) {
     const { theme, toggleTheme } = useThemeStore();

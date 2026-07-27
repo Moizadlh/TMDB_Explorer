@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Navbar from '@/components/navbar';
-import Button from '@/components/button';
-import Input from '@/components/input';
-import Loader from '@/components/loader';
-import Footer from '@/components/footer';
+import Navbar from '@/components/Navbar';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import Loader from '@/components/Loader';
+import Footer from '@/components/Footer';
 
 import { SIGNUP_SCHEMA } from '@/schema/signup';
 import { IMAGE_URLS, SIGNUP_INPUTS } from '@/utils/constants';

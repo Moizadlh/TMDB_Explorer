@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMovieDetails, getMovieAccountStates, toggleFavourite } from "@/api/api";
-import useAuthStore from "@/store/auth-store";
+import useAuthStore from "@/store/authStore";
 
 export function useMovieDetails(movieId) {
     const { sessionId, accountId } = useAuthStore();

@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { getFavouriteMovies } from "@/api/api";
-import useAuthStore from "@/store/auth-store";
+import useAuthStore from "@/store/authStore";
 
 export function useFavourites() {
     const { sessionId, accountId } = useAuthStore();

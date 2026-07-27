@@ -3,14 +3,15 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Navbar from '@/components/navbar';
-import Button from '@/components/button';
-import Input from '@/components/input';
-import Loader from '@/components/loader';
-import Footer from '@/components/footer';
+import { useLogin } from '@/hooks/useLogin';
+import useAuthStore from '@/store/authStore';
 
-import { useLogin } from '@/hooks/use-login';
-import useAuthStore from '@/store/auth-store';
+import Navbar from '@/components/Navbar';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import Loader from '@/components/Loader';
+import Footer from '@/components/Footer';
+
 import { LOGIN_SCHEMA } from '@/schema/login';
 import { IMAGE_URLS, LOGIN_INPUTS } from '@/utils/constants';
 

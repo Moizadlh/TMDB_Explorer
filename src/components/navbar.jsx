@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
-import Button from '@/components/button';
-import ThemeToggle from '@/components/theme-toggle';
-import { UserCircleIcon, HamburgerIcon, CloseIcon, LogoutIcon } from '@/components/icons';
+import Button from '@/components/Button';
+import ThemeToggle from '@/components/ThemeToggle';
+import { UserCircleIcon, HamburgerIcon, CloseIcon, LogoutIcon } from '@/components/Icons';
 
-import useAuthStore from '@/store/auth-store';
+import useAuthStore from '@/store/authStore';
 import { IMAGE_URLS, NAV_LINKS } from '@/utils/constants';
 
 export default function Navbar({ onGetStartedClick, onLoginClick }) {

@@ -2,15 +2,15 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import debounce from "lodash.debounce";
 
-import { useMovies } from "@/hooks/use-movies";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import { useMovies } from "@/hooks/useMovies";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
-import Navbar from '@/components/navbar';
-import MovieCard from '@/components/movie-card';
-import Footer from '@/components/footer';
-import Loader from '@/components/loader';
-import Input from '@/components/input';
-import { MagnifyingGlassIcon } from '@/components/icons';
+import Navbar from '@/components/Navbar';
+import MovieCard from '@/components/MovieCard';
+import Footer from '@/components/Footer';
+import Loader from '@/components/Loader';
+import Input from '@/components/Input';
+import { MagnifyingGlassIcon } from '@/components/Icons';
 
 export default function Movies() {
     const [searchParams, setSearchParams] = useSearchParams();

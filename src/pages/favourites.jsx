@@ -1,12 +1,13 @@
-import { useFavourites } from "@/hooks/use-favourites";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
-import useAuthStore from "@/store/auth-store";
+import { useFavourites } from "@/hooks/useFavourites";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
-import Navbar from '@/components/navbar';
-import MovieCard from '@/components/movie-card';
-import Footer from '@/components/footer';
-import Loader from '@/components/loader';
-import { HeartIcon, HeartOutlineIcon } from '@/components/icons';
+import useAuthStore from "@/store/authStore";
+
+import Navbar from '@/components/Navbar';
+import MovieCard from '@/components/MovieCard';
+import Footer from '@/components/Footer';
+import Loader from '@/components/Loader';
+import { HeartIcon, HeartOutlineIcon } from '@/components/Icons';
 
 export default function Favourites() {
     const { sessionId, accountId } = useAuthStore();

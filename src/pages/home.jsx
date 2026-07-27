@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import Button from '@/components/button';
-import GenreList from '@/components/genre-list';
-import MovieCard from '@/components/movie-card';
-import { PlayIcon, InformationCircleIcon, StarIcon, ClockIcon, CalendarIcon } from '@/components/icons';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import Button from '@/components/Button';
+import GenreList from '@/components/GenreList';
+import MovieCard from '@/components/MovieCard';
+import { PlayIcon, InformationCircleIcon, StarIcon, ClockIcon, CalendarIcon } from '@/components/Icons';
 
 import { HERO_MOVIE, RELATED_MOVIES } from '@/utils/constants';
 
