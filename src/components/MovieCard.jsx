@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { StarIcon } from '@/components/icons';
+import { StarIcon } from '@/components/Icons';
 
 import { formatDecimal, getReleaseYear, getImageUrl } from '@/utils/index';
 
